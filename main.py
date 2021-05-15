@@ -14,6 +14,7 @@ while action >= 0:
         update.update()
     elif action == 4:
         delete.delete()
+
     print('Chương trình quản lý sinh viên'.center(60,'-'))
     print("Nhập 1: Thêm sinh viên")
     print("Nhập 2: Xem danh sách sinh viên")
