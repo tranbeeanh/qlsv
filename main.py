@@ -24,11 +24,11 @@ class Student:
         else:
             return "Yeu"
 
-    def addStudent(self):
-        self.ten = input('Nhap ten sinh vien: ')
-        self.toan = float(input("Nhập diem toan: "))
-        self. ly = float(input("Nhập diem ly: "))
-        self.hoa = float(input("Nhập diem hoa: "))
+    def addStudent(self, ten, toan, ly, hoa):
+        self.ten = ten
+        self.toan = toan
+        self. ly = ly
+        self.hoa = hoa
         self.diemtb = self.averagePoint(self.toan, self.ly, self.hoa)
         self. phanloai = self.rank(self.diemtb)
 
@@ -83,8 +83,7 @@ class Student:
                 return True
         return False
 
-    def update(self):
-        id = int(input('Nhap id sinh vien muon cap nhat: '))
+    def update(self, id):
         a = self.find(id)
         if a != False:
             ten = input("Nhập tên sinh viên: ")
@@ -107,8 +106,7 @@ class Student:
         else:
             print('Khong ton tai sinh vien can cap nhat.')
 
-    def delete(self):
-        id = int(input('Nhap id sinh vien muon xoa: '))
+    def delete(self, id):
         a = self.find(id)
         connection = getconnect.getConnection()
         connection.autocommit(True)
@@ -119,18 +117,17 @@ class Student:
 
                     cursor.execute(sql, (id))
 
-                    print('Da xoa thong tin sinh vien', id)
+                    print('Đã xóa thông tin sinh viên có id', id)
             finally:
                 connection.close()
         else:
             print('Khong ton tai sinh vien co id', id)
 
-    def ghiFileJson(self):
-        a = input('Nhap ten file: ')
+    def ghiFileJson(self, name):
         listStudents = self.query()
-        with open(f'{a}.json', 'w') as wf:
+        with open(f'{name}.json', 'w') as wf:
             json.dump(listStudents, wf, ensure_ascii=False, indent=2)
-        print(f'Da ghi du lieu vao file {a}.json')
+        print(f'Da ghi du lieu vao file {name}.json')
 
 
 if __name__ == '__main__':
@@ -138,15 +135,15 @@ if __name__ == '__main__':
     action = 0
     while action >= 0:
         if action == 1:
-            s.addStudent()
+            s.addStudent(input('Nhap ten sinh vien: '), float(input("Nhập diem toan: ")), float(input("Nhập diem ly: ")), float(input("Nhập diem hoa: ")))
         elif action == 2:
             s.showStudents()
         elif action == 3:
-            s.update()
+            s.update(int(input('Nhap id sinh vien muon cap nhat: ')))
         elif action == 4:
-            s.delete()
+            s.delete(int(input('Nhap id sinh vien muon xoa: ')))
         elif action == 5:
-            s.ghiFileJson()
+            s.ghiFileJson(input('Nhap ten file: '))
 
         print('Chương trình quản lý sinh viên'.center(60,'-'))
         print("Nhập 1: Thêm sinh viên")
