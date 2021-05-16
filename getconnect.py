@@ -7,7 +7,7 @@ def getConnection():
                                  user='root',
                                  port='',
                                  password='',
-                                 db='gsc_db',
+                                 db='qlsv',
                                  cursorclass=pymysql.cursors.DictCursor)
     return connection
 
