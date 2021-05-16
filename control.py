@@ -29,7 +29,6 @@ class Control:
         phanloai = Control.rank(diemtb)
 
         connection = getconnect.getConnection()
-        # xac nhan thay doi database
         connection.autocommit(True)
 
         try:
@@ -50,80 +49,28 @@ class Control:
         try:
             with connection.cursor() as cursor:
                 sql = 'SELECT * FROM SINHVIEN'
-                result_count = cursor.execute(sql)
-                print('Tong so sinh vien: ' + str(result_count))
-                rows = cursor.fetchall()
-                for row in rows:
-                    print(row)
-        finally:
-            connection.close()
-
-    @staticmethod
-    def query():
-        connection = getconnect.getConnection()
-        try:
-            with connection.cursor() as cursor:
-                sql = 'SELECT * FROM SINHVIEN'
                 cursor.execute(sql)
-                rows = cursor.fetchall()
-                return rows
+                students = cursor.fetchall()
+                return students
         finally:
             connection.close()
 
     @staticmethod
     def findID(id):
-        a = Control.query()
-        for i in range(len(a)):
-            if a[i]['ID'] == id:
-                return True
-        return False
-
-    @staticmethod
-    def showID(id):
-        a = Control.findID(id)
-        if a != False:
-            connection = getconnect.getConnection()
-            try:
-                with connection.cursor() as cursor:
-                    sql = 'SELECT * FROM SINHVIEN WHERE ID = %s'
-                    cursor.execute(sql, (id))
-                    rows = cursor.fetchall()
-                    for row in rows:
-                        print(row)
-            finally:
-                connection.close()
-        else:
-            print('không tìm thấy sinh viên có id', id)
-
-    @staticmethod
-    def findName(name):
-        a = Control.query()
-        for i in range(len(a)):
-            if a[i]['NAME'] == name:
-                return True
-        return False
-
-    @staticmethod
-    def showName(ten):
-        a = Control.findName(ten)
-        if a != False:
-            connection = getconnect.getConnection()
-            try:
-                with connection.cursor() as cursor:
-                    sql = 'SELECT * FROM SINHVIEN WHERE NAME = %s'
-                    cursor.execute(sql, (ten))
-                    rows = cursor.fetchall()
-                    for row in rows:
-                        print(row)
-            finally:
-                connection.close()
-        else:
-            print('không tìm thấy sinh viên có tên', ten)
+        connection = getconnect.getConnection()
+        try:
+            with connection.cursor() as cursor:
+                sql = 'SELECT * FROM SINHVIEN WHERE ID = %s'
+                cursor.execute(sql, (id))
+                student = cursor.fetchall()
+                return student
+        finally:
+            connection.close()
 
     @staticmethod
     def update(id):
         a = Control.findID(id)
-        if a != False:
+        if a:
             ten = input("Nhập tên sinh viên: ")
             toan = float(input("Nhập diem toan: "))
             ly = float(input("Nhập diem ly: "))
@@ -148,9 +95,9 @@ class Control:
     @staticmethod
     def delete(id):
         a = Control.findID(id)
-        connection = getconnect.getConnection()
-        connection.autocommit(True)
-        if a != False:
+        if a:
+            connection = getconnect.getConnection()
+            connection.autocommit(True)
             try:
                 with connection.cursor() as cursor:
                     sql = 'Delete from SINHVIEN where ID = %s'
@@ -165,7 +112,7 @@ class Control:
 
     @staticmethod
     def ghiFileJson(name):
-        listStudents = Control.query()
+        listStudents = Control.showAll()
         with open(f'{name}.json', 'w') as wf:
             json.dump(listStudents, wf, ensure_ascii=False, indent=2)
         print(f'Da ghi du lieu vao file {name}.json')
