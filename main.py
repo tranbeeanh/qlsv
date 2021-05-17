@@ -6,18 +6,32 @@ if __name__ == '__main__':
     action = 0
     while action >= 0:
         if action == 1:
-            s = student.Student(int(input('Nhập id của sinh viên: ')), input('Nhập tên của sinh viên: '), float(input("Nhập điểm toán: ")),
-                                float(input("Nhập điểm lý: ")), float(input("Nhập điểm hóa: ")))
-            Control.addStudent(s)
+            id = int(input('Nhập id của sinh viên: '))
+            st = Control.findID(id)
+            if st:
+                print("ID sinh viên đã tồn tại")
+            else:
+                s = student.Student(id, input('Nhập tên của sinh viên: '), float(input("Nhập điểm toán: ")),
+                                    float(input("Nhập điểm lý: ")), float(input("Nhập điểm hóa: ")))
+                Control.addStudent(s)
         elif action == 2:
             a = Control.showAll()
             print('Tổng số sinh viên: ', len(a))
             for i in a:
                 print(i)
         elif action == 3:
-            Control.update(int(input('Nhập id của sinh viên muốn cập nhật: ')))
+            id = int(input('Nhập id của sinh viên muốn cập nhật: '))
+            st = Control.findID(id)
+            if st:
+                s = student.Student(id, input('Nhập tên của sinh viên: '), float(input("Nhập điểm toán: ")),
+                                    float(input("Nhập điểm lý: ")), float(input("Nhập điểm hóa: ")))
+                Control.update(s)
+            else:
+                print('Không tồn tại sinh viên cần cập nhật')
+
         elif action == 4:
-            Control.delete(int(input('Nhập id của sinh viên muốn xóa: ')))
+            st = Control.findID(int(input('Nhập id của sinh viên muốn xóa: ')))
+            Control.delete(st)
         elif action == 5:
             Control.ghiFileJson(input('Nhập tên file: '))
 

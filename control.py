@@ -22,20 +22,16 @@ class Control:
 
     @staticmethod
     def addStudent(s):
-        a = Control.findID(s.id)
-        if a:
-            print("ID sinh viên đã tồn tại")
-        else:
-            connection = getconnect.getConnection()
-            connection.autocommit(True)
-            try:
-                with connection.cursor() as cursor:
-                    sql = "INSERT INTO SINHVIEN (ID, NAME, DIEMTOAN, DIEMLY, DIEMHOA, DIEMTB, PHANLOAI) " \
-                          "VALUES (%s, %s, %s, %s, %s, %s, %s)"
-                    cursor.execute(sql, (s.id, s.ten, s.toan, s.ly, s.hoa, s.diemtb, s.phanloai))
-                    print("Đã thêm thông tin sinh viên", s.ten)
-            finally:
-                connection.close()
+        connection = getconnect.getConnection()
+        connection.autocommit(True)
+        try:
+            with connection.cursor() as cursor:
+                sql = "INSERT INTO SINHVIEN (ID, NAME, DIEMTOAN, DIEMLY, DIEMHOA, DIEMTB, PHANLOAI) " \
+                      "VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                cursor.execute(sql, (s.id, s.ten, s.toan, s.ly, s.hoa, s.diemtb, s.phanloai))
+                print("Đã thêm thông tin sinh viên", s.ten)
+        finally:
+            connection.close()
 
     @staticmethod
     def showAll():
@@ -66,33 +62,21 @@ class Control:
             connection.close()
 
     @staticmethod
-    def update(id):
-        st = Control.findID(id)
-        if st:
-            st.ten = input("Nhập tên sinh viên: ")
-            st.toan = float(input("Nhập điểm toán: "))
-            st.ly = float(input("Nhập điểm lý: "))
-            st.hoa = float(input("Nhập điểm hóa: "))
-            st.diemtb = Control.averagePoint(st.toan, st.ly, st.hoa)
-            st.phanloai = Control.rank(st.diemtb)
+    def update(st):
+        connection = getconnect.getConnection()
+        connection.autocommit(True)
+        try:
+            with connection.cursor() as cursor:
+                sql = 'UPDATE SINHVIEN SET NAME = %s, DIEMTOAN = %s, DIEMLY =%s, DIEMHOA =%s, DIEMTB = %s, ' \
+                      'PHANLOAI =%s WHERE ID = %s '
+                cursor.execute(sql, (st.ten, st.toan, st.ly, st.hoa, st.diemtb, st.phanloai, st.id))
+                print('Đã cập nhật thông tin của sinh viên', st.ten)
+        finally:
+            connection.close()
 
-            connection = getconnect.getConnection()
-            connection.autocommit(True)
-
-            try:
-                with connection.cursor() as cursor:
-                    sql = 'UPDATE SINHVIEN SET NAME = %s, DIEMTOAN = %s, DIEMLY =%s, DIEMHOA =%s, DIEMTB = %s, ' \
-                          'PHANLOAI =%s WHERE ID = %s '
-                    cursor.execute(sql, (st.ten, st.toan, st.ly, st.hoa, st.diemtb, st.phanloai, st.id))
-                    print('Đã cập nhật thông tin của sinh viên', st.ten)
-            finally:
-                connection.close()
-        else:
-            print('Không tồn tại sinh viên cần cập nhật')
 
     @staticmethod
-    def delete(id):
-        st = Control.findID(id)
+    def delete(st):
         if st:
             connection = getconnect.getConnection()
             connection.autocommit(True)
