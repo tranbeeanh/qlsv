@@ -11,7 +11,7 @@ with connection.cursor() as cursor:
     try:
         sql = '''
             CREATE TABLE SINHVIEN (
-                ID INT(11) NOT NULL AUTO_INCREMENT,
+                ID INT(11) NOT NULL UNIQUE,
                 NAME VARCHAR(255) NOT NULL,
                 DIEMTOAN FLOAT NOT NULL,
                 DIEMLY FLOAT NOT NULL,

@@ -1,6 +1,7 @@
 import json
 
 import getconnect
+import student
 
 
 class Control:
@@ -21,27 +22,20 @@ class Control:
 
     @staticmethod
     def addStudent(s):
-        ten = s.ten
-        toan = s.toan
-        ly = s.ly
-        hoa = s.hoa
-        diemtb = Control.averagePoint(toan, ly, hoa)
-        phanloai = Control.rank(diemtb)
-
-        connection = getconnect.getConnection()
-        connection.autocommit(True)
-
-        try:
-            with connection.cursor() as cursor:
-                sql = "INSERT INTO SINHVIEN (NAME, DIEMTOAN, DIEMLY, DIEMHOA, DIEMTB, PHANLOAI) " \
-                      "VALUES (%s, %s, %s, %s, %s, %s)"
-
-                # Thực thi sql và truyền tham số
-                cursor.execute(sql, (ten, toan, ly, hoa, diemtb, phanloai))
-
-                print("Da them thong tin sinh vien", ten)
-        finally:
-            connection.close()
+        a = Control.findID(s.id)
+        if a:
+            print("ID sinh viên đã tồn tại")
+        else:
+            connection = getconnect.getConnection()
+            connection.autocommit(True)
+            try:
+                with connection.cursor() as cursor:
+                    sql = "INSERT INTO SINHVIEN (ID, NAME, DIEMTOAN, DIEMLY, DIEMHOA, DIEMTB, PHANLOAI) " \
+                          "VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                    cursor.execute(sql, (s.id, s.ten, s.toan, s.ly, s.hoa, s.diemtb, s.phanloai))
+                    print("Đã thêm thông tin sinh viên", s.ten)
+            finally:
+                connection.close()
 
     @staticmethod
     def showAll():
@@ -62,21 +56,25 @@ class Control:
             with connection.cursor() as cursor:
                 sql = 'SELECT * FROM SINHVIEN WHERE ID = %s'
                 cursor.execute(sql, (id))
-                student = cursor.fetchall()
-                return student
+                a = cursor.fetchone()
+                if a:
+                    st = student.Student(a['ID'], a['NAME'], a['DIEMTOAN'], a['DIEMLY'], a['DIEMHOA'])
+                    return st
+                else:
+                    return False
         finally:
             connection.close()
 
     @staticmethod
     def update(id):
-        a = Control.findID(id)
-        if a:
-            ten = input("Nhập tên sinh viên: ")
-            toan = float(input("Nhập diem toan: "))
-            ly = float(input("Nhập diem ly: "))
-            hoa = float(input("Nhập diem hoa: "))
-            diemtb = Control.averagePoint(toan, ly, hoa)
-            phanloai = Control.rank(diemtb)
+        st = Control.findID(id)
+        if st:
+            st.ten = input("Nhập tên sinh viên: ")
+            st.toan = float(input("Nhập điểm toán: "))
+            st.ly = float(input("Nhập điểm lý: "))
+            st.hoa = float(input("Nhập điểm hóa: "))
+            st.diemtb = Control.averagePoint(st.toan, st.ly, st.hoa)
+            st.phanloai = Control.rank(st.diemtb)
 
             connection = getconnect.getConnection()
             connection.autocommit(True)
@@ -85,34 +83,32 @@ class Control:
                 with connection.cursor() as cursor:
                     sql = 'UPDATE SINHVIEN SET NAME = %s, DIEMTOAN = %s, DIEMLY =%s, DIEMHOA =%s, DIEMTB = %s, ' \
                           'PHANLOAI =%s WHERE ID = %s '
-                    cursor.execute(sql, (ten, toan, ly, hoa, diemtb, phanloai, id))
-                    print('Da cap nhat thong tin sinh vien', ten)
+                    cursor.execute(sql, (st.ten, st.toan, st.ly, st.hoa, st.diemtb, st.phanloai, st.id))
+                    print('Đã cập nhật thông tin của sinh viên', st.ten)
             finally:
                 connection.close()
         else:
-            print('Khong ton tai sinh vien can cap nhat.')
+            print('Không tồn tại sinh viên cần cập nhật')
 
     @staticmethod
     def delete(id):
-        a = Control.findID(id)
-        if a:
+        st = Control.findID(id)
+        if st:
             connection = getconnect.getConnection()
             connection.autocommit(True)
             try:
                 with connection.cursor() as cursor:
                     sql = 'Delete from SINHVIEN where ID = %s'
-
-                    cursor.execute(sql, (id))
-
-                    print('Đã xóa thông tin sinh viên có id', id)
+                    cursor.execute(sql, (st.id))
+                    print('Đã xóa thông tin sinh viên có id', st.id)
             finally:
                 connection.close()
         else:
-            print('Khong ton tai sinh vien co id', id)
+            print('Không tồn tại sinh viên có id', id)
 
     @staticmethod
     def ghiFileJson(name):
         listStudents = Control.showAll()
         with open(f'{name}.json', 'w') as wf:
             json.dump(listStudents, wf, ensure_ascii=False, indent=2)
-        print(f'Da ghi du lieu vao file {name}.json')
+        print(f'Đã ghi thông tin sinh viên vào file {name}.json')

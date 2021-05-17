@@ -6,21 +6,20 @@ if __name__ == '__main__':
     action = 0
     while action >= 0:
         if action == 1:
-            s = student.Student(input('Nhap ten sinh vien: '), float(input("Nhập diem toan: ")),
-                                float(input("Nhập diem ly: ")),
-                                float(input("Nhập diem hoa: ")))
+            s = student.Student(int(input('Nhập id của sinh viên: ')), input('Nhập tên của sinh viên: '), float(input("Nhập điểm toán: ")),
+                                float(input("Nhập điểm lý: ")), float(input("Nhập điểm hóa: ")))
             Control.addStudent(s)
         elif action == 2:
             a = Control.showAll()
-            print('Tong so sinh vien: ', len(a))
+            print('Tổng số sinh viên: ', len(a))
             for i in a:
                 print(i)
         elif action == 3:
-            Control.update(int(input('Nhap id sinh vien muon cap nhat: ')))
+            Control.update(int(input('Nhập id của sinh viên muốn cập nhật: ')))
         elif action == 4:
-            Control.delete(int(input('Nhap id sinh vien muon xoa: ')))
+            Control.delete(int(input('Nhập id của sinh viên muốn xóa: ')))
         elif action == 5:
-            Control.ghiFileJson(input('Nhap ten file: '))
+            Control.ghiFileJson(input('Nhập tên file: '))
 
         print('Chương trình quản lý sinh viên'.center(60, '-'))
         print("Nhập 1: Thêm sinh viên")
