@@ -1,3 +1,17 @@
+"""
+script tạo database thông qua thư viện pymysql
+...
+
+Classes:
+---------
+none
+
+import:
+----------
+pymysql
+    phục vụ kết nối tạo database thông qua pymysql
+"""
+
 import pymysql
 
 connection = pymysql.connect(host='localhost',
