@@ -7,12 +7,12 @@ functions:
 
 Cần import:
     module student chứa class student đại diện mô hình một sinh viên
-    class Control trong module control chưa các static method chạy các chức năng phù hơp
+    class Controller trong module Controller chưa các static method chạy các chức năng phù hơp
 """
 
 
 import student
-from control import Control
+from control import StudentManager
 
 
 def main():
@@ -39,41 +39,8 @@ def main():
 
     """
 
-    action = 0
-    while action >= 0:
-
-        if action == 1:
-            id = int(input('Nhập id của sinh viên: '))
-            st = Control.findID(id)
-            if st:
-                print("ID sinh viên đã tồn tại")
-            else:
-                s = student.Student(id, input('Nhập tên của sinh viên: '), float(input("Nhập điểm toán: ")),
-                                    float(input("Nhập điểm lý: ")), float(input("Nhập điểm hóa: ")))
-                Control.addStudent(s)
-
-        elif action == 2:
-            a = Control.showAll()
-            print('Tổng số sinh viên: ', len(a))
-            for i in a:
-                print(i)
-
-        elif action == 3:
-            id = int(input('Nhập id của sinh viên muốn cập nhật: '))
-            st = Control.findID(id)
-            if st:
-                s = student.Student(id, input('Nhập tên của sinh viên: '), float(input("Nhập điểm toán: ")),
-                                    float(input("Nhập điểm lý: ")), float(input("Nhập điểm hóa: ")))
-                Control.update(s)
-            else:
-                print('Không tồn tại sinh viên cần cập nhật')
-
-        elif action == 4:
-            st = Control.findID(int(input('Nhập id của sinh viên muốn xóa: ')))
-            Control.delete(st)
-
-        elif action == 5:
-            Control.ghiFileJson(input('Nhập tên file: '))
+    action = True
+    while action:
 
         print('Chương trình quản lý sinh viên'.center(60, '-'))
         print("Nhập 1: Thêm sinh viên")
@@ -84,8 +51,49 @@ def main():
         print("Nhập 0: Thoát khỏi chương trình")
         print("-" * 60)
         action = int(input())
-        if action == 0:
+
+        if action == 1:
+            id = int(input('Nhập id của sinh viên: '))
+            st = StudentManager.findStudent(id)
+            if st:
+                print("ID sinh viên đã tồn tại")
+            else:
+                s = student.Student(id, input('Nhập tên của sinh viên: '), float(input("Nhập điểm toán: ")),
+                                    float(input("Nhập điểm lý: ")), float(input("Nhập điểm hóa: ")))
+                StudentManager.addStudent(s)
+
+        elif action == 2:
+            a = StudentManager.showAll()
+            print('Tổng số sinh viên: ', len(a))
+            for i in a:
+                print(i)
+
+        elif action == 3:
+            id = int(input('Nhập id của sinh viên muốn cập nhật: '))
+            st = StudentManager.findStudent(id)
+            if st:
+                s = student.Student(id, input('Nhập tên của sinh viên: '), float(input("Nhập điểm toán: ")),
+                                    float(input("Nhập điểm lý: ")), float(input("Nhập điểm hóa: ")))
+                StudentManager.update(s)
+            else:
+                print('Không tồn tại sinh viên cần cập nhật')
+
+        elif action == 4:
+            id = int(input('Nhập id của sinh viên muốn xóa: '))
+            st = StudentManager.findStudent(id)
+            if st:
+                StudentManager.delete(st)
+            else:
+                print('Không tồn tại sinh viên có id', id)
+
+        elif action == 5:
+            StudentManager.ghiFileJson(input('Nhập tên file: '))
+
+        elif action == 0:
             break
+        else:
+            print('Không tồn tại chức năng, đề nghị nhập lại!')
+
 
 if __name__ == '__main__':
     main()

@@ -7,7 +7,7 @@ Classes:
 Student
 """
 
-from control import Control
+from control import StudentManager
 
 
 class Student:
@@ -62,5 +62,5 @@ class Student:
         self.toan = toan
         self.ly = ly
         self.hoa = hoa
-        self.diemtb = Control.averagePoint(toan, ly, hoa)
-        self.phanloai = Control.rank(self.diemtb)
+        self.diemtb = StudentManager.averagePoint(toan, ly, hoa)
+        self.phanloai = StudentManager.rank(self.diemtb)

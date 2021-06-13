@@ -1,10 +1,27 @@
 """
-script gồm các class Control chứa các static method thực hiện các chức năng của chương trình
+script gồm các class Controller chứa các static method thực hiện các chức năng của chương trình gồm:
+    addStudent(s):
+        thêm thông tin sinh viên vào sql
+    showAll():
+        in ra danh sách các sinh viên trong sql
+    findID(id):
+        trả về instance một sinh viên thông qua nhập id để làm tham số các method khác
+    update(st):
+        cập nhật thông tin một sinh viên
+    delete(st):
+        xóa thông tin một sinh viên
+    ghiFileJson(name):
+        ghi danh sách thông tin sinh viên trong sql ra file json
+ngoài ra có hàm phụ trợ không phải chức năng của chương trình:
+    averagePoint(toan, ly, hoa):
+        Tính điểm trung bình 3 môn
+    rank(tb):
+        Xác định phân loại thông qua điểm trung bình
 ...
 
 Classes:
 ---------
-Control
+Controller
 
 import:
 ----------
@@ -22,7 +39,7 @@ import getconnect
 import student
 
 
-class Control:
+class StudentManager:
     """
     class gồm các static method sử dụng để thực hiện các chức năng của chương trình
 
@@ -35,9 +52,9 @@ class Control:
     Methods
     -------
     averagePoint(toan, ly, hoa):
-        Tính điểm trung bình 3 môn
+        Hàm phụ trợ, Tính điểm trung bình 3 môn, không thực hiện chức năng chương trình
     rank(tb):
-        Xác định phân loại thông qua điểm trung bình
+        Hàm phụ trợ, Xác định phân loại thông qua điểm trung bình, không thực hiện chức năng chương trình
     addStudent(s):
         thêm thông tin sinh viên vào sql
     showAll():
@@ -125,7 +142,6 @@ class Control:
     @staticmethod
     def showAll():
         """
-        kết nối database sql
         truy vấn danh sách tất cả các instance trong databse
 
         Parameters
@@ -149,9 +165,8 @@ class Control:
             connection.close()
 
     @staticmethod
-    def findID(id):
+    def findStudent(id):
         """
-        kết nối database sql
         truy vấn instance của class Student có id giống như parameters
 
         Parameters
@@ -161,9 +176,8 @@ class Control:
 
         Returns
         -------
-        st: dict nếu trong database tồn tại instance có id giống parameter
-            instance của class Student đã được ghi vào database có id trùng khớp với parameter
-        False nết trong database không tồn tại instance có id giống parameter
+        st: instance nếu trong database tồn tại instance có id giống parameter
+        False nếu trong database không tồn tại instance có id giống parameter
         """
         connection = getconnect.getConnection()
         try:
@@ -182,7 +196,6 @@ class Control:
     @staticmethod
     def update(st):
         """
-        kết nối database sql
         update thông tin instance trùng khớp parameter
 
         Parameters
@@ -211,7 +224,6 @@ class Control:
     @staticmethod
     def delete(st):
         """
-        kết nối database sql
         xóa thông tin instance trùng khớp parameter
 
         Parameters
@@ -225,24 +237,21 @@ class Control:
         print xóa thành công
 
         """
-        if st:
-            connection = getconnect.getConnection()
-            connection.autocommit(True)
-            try:
-                with connection.cursor() as cursor:
-                    sql = 'Delete from SINHVIEN where ID = %s'
-                    cursor.execute(sql, (st.id))
-                    print('Đã xóa thông tin sinh viên có id', st.id)
-            finally:
-                connection.close()
-        else:
-            print('Không tồn tại sinh viên có id', id)
+        connection = getconnect.getConnection()
+        connection.autocommit(True)
+        try:
+            with connection.cursor() as cursor:
+                sql = 'Delete from SINHVIEN where ID = %s'
+                cursor.execute(sql, (st.id))
+                print('Đã xóa thông tin sinh viên có id', st.id)
+        finally:
+            connection.close()
+
 
     @staticmethod
     def ghiFileJson(name):
         """
-        tạo listStudents là list chứa các instance sinh viên trong database (dict) qua hàm showAll()
-        ghi listStudents ra file json có tên là parameter
+        ghi danh sách sinh viên ra file json có tên là parameter
 
         Parameters
         ----------
@@ -255,7 +264,7 @@ class Control:
         print ghi file thành công
 
         """
-        listStudents = Control.showAll()
+        listStudents = StudentManager.showAll()
         with open(f'{name}.json', 'w') as wf:
             json.dump(listStudents, wf, ensure_ascii=False, indent=2)
         print(f'Đã ghi thông tin sinh viên vào file {name}.json')
